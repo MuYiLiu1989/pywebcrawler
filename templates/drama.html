@@ -1,0 +1,76 @@
+{% extends 'Base.html' %}
+
+{% block title %}
+	戲劇
+{% endblock %}
+
+{% block css %}
+<link href="{{ url_for('static',filename='css/drama.css')  }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+
+<form method="get">
+    <div class="row justify-content-start align-items-end">
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="dramtype">戲劇名稱或類別：</label>
+                <input type="text" class="form-control" name="q" id="dramtype" />
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">   
+                <label for="year">年份：從</label>
+                <input type="text" class="form-control" name='minp' id="year"/>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="to">到</label>
+                <input type="text" class="form-control" name='maxp' id="to"/>
+            </div>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="order">年份排序：</label>
+            <select class="form-select" name="sortp" id="order">
+                <option value="asc" {% if sortp == "asc" %}selected{% endif %}>遞增</option>
+                <option value="desc" {% if sortp == "desc" %}selected{% endif %}>遞減</option>                        
+            </select>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary">查詢</button>
+        </div>
+        
+    </div>
+</form>
+
+
+<div class="container mt-2">
+        <div class="row">
+            {% for row in data %}
+            <div class="col-md-6 col-lg-3 mb-2">
+                <div class="card">
+                    <img class="card-img-top" src="{{row[6]}}" alt="{{row[2]}}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{row[2]}}</h5>
+                        <h6 class="card-subtitle  mb-2 text-muted">國家：{{row[3]}}</h6>
+                        <p class="card-text">
+                            平台：{{row[1]}} <br>
+                            年份：{{row[5]}} <br>
+                            集數：{{row[8]}} <br>
+                            主題：{{row[4]}}
+                        </p>
+                        <a href="{{row[7]}}" class="card-link">相關連結</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div style="clear:both;margin-top:5%;padding-left:35%;">
+        {{ pagination.info }}
+        {{ pagination.links }}
+    </div>
+{% endblock %}

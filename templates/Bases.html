@@ -1,0 +1,77 @@
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>
+			{% block title %}
+			{% endblock %}
+		</title>
+		
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" >
+		<link href="{{ url_for('static',filename='css/index.css')  }}" rel="stylesheet">
+
+		{% block css %}
+
+		{% endblock %}
+
+		{% block js %}
+
+		{% endblock %}
+
+	</head>
+
+
+	<body>
+
+		
+
+			<div id="banner">
+				<img src="/static/img/banner.jpg" class="img-fluid">
+			</div>
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-secondary" role="navigation">
+	  <div class="container-fluid">
+		<div style="line-height: 50px;margin-right: 40px;">
+		<a class="navbar-brand" href="/">
+			<img src="/static/img/home.png" style="height: 100%;padding-left:30px;padding-right: 10px;" alt="首頁">首頁
+		</a>
+		</div>
+		<div class="collapse navbar-collapse" id="navContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item"><a class="nav-link" href="/books">書籍</a></li>
+				<li class="nav-item"><a class="nav-link" href="/drama">戲劇</a></li>
+				
+				  <li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">監測圖</a> <!-- bs一定要加 -->
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="/24temp">24小時氣溫比較</a></li>
+						<li><a class="dropdown-item" href="/aqi">24小時AQI指標比較</a></li>
+					</ul>
+				  </li>
+				
+			</ul>
+		</div>
+	  </div>
+	</nav>
+
+			<div id="content">
+
+				{% block content %}
+
+				{% endblock %}
+
+			</div>
+
+			<div id="footer">
+				這是我的爬蟲資料呈現網站<br>
+				<a href="https://www.flaticon.com/free-icons/homepage" title="homepage icons">Homepage icons created by Gajah Mada - Flaticon</a>
+			</div>
+
+		
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+	</body>
+
+
+
+</html>

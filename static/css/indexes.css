@@ -1,0 +1,47 @@
+body{
+	margin:0;
+}
+
+.img-fluid{
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+}
+
+
+.container-fluid{
+	height: 50px;
+}
+
+.container-fluid ul{
+	line-height: 50px;
+}
+
+.navbar-nav > li{
+  padding-left:30px;
+  padding-right:30px;
+}
+
+ul.dropdown-menu{
+	line-height: 50px;
+}
+
+.container-fluid a{
+	text-decoration: none;
+	font-weight: bold;
+	font-size: 24px;
+}
+
+#content{
+	min-height: 600px;
+}
+
+#footer{
+	height: 50px;
+	background-color: #000000;
+	color: #ffffff;
+	text-align: center;
+	line-height: 50px;
+	clear: both;
+}
+

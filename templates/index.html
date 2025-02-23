@@ -1,0 +1,91 @@
+{% extends 'Base.html' %}
+
+{% block title %}
+	首頁
+{% endblock %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+<div id="indexleft" class="col-md-2">
+	
+    {% for dra in drama %}
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <div class="card">
+                    <img class="card-img-top" src="{{dra[3]}}" alt="{{dra[0]}}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{dra[0]}}</h5>
+                        <h6 class="card-subtitle  mb-2 text-muted">rate:{{dra[1]}}</h6>
+                        <p class="card-text">
+                            集數：{{dra[2]}}
+                        </p>
+                        <a href="{{dra[4]}}" class="card-link">相關連結</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+        
+</div>
+
+<div id="indexmiddle" class="col-md-8">
+	<h2 style="margin-top: 20px;">即時氣溫--><span><a href="/24temp">24小時氣溫比較</a></span></h2>
+	<div>
+  		<canvas id="temp"></canvas>
+	</div>
+	<script>
+		var temp = new Array(10);
+		var station = new Array(10);
+		var n = 0
+	</script>
+	{% for row in county %}
+	<script src="https://www.cwa.gov.tw/Data/js/Observe/County/{{row}}.js"></script>
+	<script>
+		if ({{row}}==63){
+			station[n] = ST["{{row}}"]['1'].StationName.C;
+			temp[n] = ST["{{row}}"]['1'].Temperature.C.C;
+		}else{
+			station[n] = ST["{{row}}"]['0'].StationName.C;
+			temp[n] = ST["{{row}}"]['0'].Temperature.C.C;	
+		}
+		n += 1
+	</script>
+	{% endfor %}
+	<script src="{{ url_for('static', filename='js/temp.js') }}" type="text/javascript"></script>
+	<h2 style="margin-top: 50px;">即時AQI--><span><a href="/aqi">96小時AQI指標比較</a></span></h2>
+	<div>
+  		<canvas id="aqi"></canvas>
+	</div>
+	<script>
+		var aqinow = {{aqinow | tojson}}
+		var aqistch = {{aqistch | tojson}}
+	</script>
+	<script src="{{ url_for('static', filename='js/aqi.js') }}" type="text/javascript"></script>
+</div>
+
+<div id="indexright" class="col-md-2">
+	{% for boo in books %}
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <div class="card">
+                    <img class="card-img-top" src="{{boo[4]}}" alt="{{boo[0]}}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{boo[0]}}</h5>
+                        <h6 class="card-subtitle  mb-2 text-muted">Top:{{boo[1]}}</h6>
+                        <p class="card-text">
+                            {{boo[2]}} <br>
+                            {{boo[3]}}
+                        </p>
+                        <a href="{{boo[5]}}" class="card-link">相關連結</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}

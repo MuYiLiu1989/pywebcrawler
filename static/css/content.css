@@ -1,0 +1,10 @@
+.itemarea{
+	width:18%;
+	float:left;
+	margin:1%;
+	height:500px;
+}
+
+.itemarea img{
+	width: 100%;
+}
