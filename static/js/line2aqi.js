@@ -28,6 +28,24 @@ const lineChart = new Chart(ctx, {
     options: {
         responsive: true, // 自適應大小
         plugins: {
+        	tooltip: {
+        		callbacks: {
+          			label: function(tooltipItem) {
+    				var datasetIndex = tooltipItem.datasetIndex;  // 獲取數據集索引
+    				var dataIndex = tooltipItem.dataIndex;       // 獲取 X 軸的索引（對應資料點）
+  
+    				var description = descriptionsList[datasetIndex][dataIndex]; // 根據 datasetIndex & dataIndex 取得描述
+  
+  					return `${tooltipItem.dataset.label}: ${description}`;
+					}
+        		}
+      		},
+/*
+[
+  { label: "一月", dataset: { label: "2023 銷售額" }, raw: 30 },
+  { label: "一月", dataset: { label: "2024 銷售額" }, raw: 40 }
+]
+*/    
             legend: {
                 display: true, // 顯示圖例 (預設為 true)
                 position: 'top', // 圖例位置 (可選：'top', 'bottom', 'left', 'right')

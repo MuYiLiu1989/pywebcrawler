@@ -219,6 +219,8 @@ def aqi():
         date=[]
         stname1=None
         stname2=None
+        st1=[]
+        st2=[]
 
     else:
         
