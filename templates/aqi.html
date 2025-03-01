@@ -14,38 +14,55 @@
 
 {% block content %}
 
-<form method="get">	
+<form method="get">
 <div class="row align-items-end">
   <div class="col-md-3">
   	<label class="control-label">請選擇測站：</label>
     <select name="station1" class="form-select" required id="ST1">
     	
-	  	{% for row in maplist %}
-	  	
-			<option value='{{row}}' {% if ST1ID == row %}selected{% endif %}>{{maplist[row]}}</option>
-			
+	  	{% for ca in categList.keys() %}
+	  		<optgroup label="{{countymap[ca]}}">
+	  		{% for row in categList[ca] %}
+				<option value='{{row}}' {% if ST1ID == row %}selected{% endif %}>{{maplist[row][0]}}</option>
 			{% endfor %}
-		</select>
+			</optgroup>
+		{% endfor %}
+	</select>
   </div>
   <div class="col-md-3">
   	<label class="control-label">請選擇測站：</label>
 		<select name="station2" class="form-select" required id="ST2">
-			{% for row in maplist %}
-			
-			<option value='{{row}}' {% if ST2ID == row %}selected{% endif %}>{{maplist[row]}}</option>
-			
+			{% for ca in categList.keys() %}
+	  		<optgroup label="{{countymap[ca]}}">
+	  			{% for row in categList[ca] %}
+					<option value='{{row}}' {% if ST2ID == row %}selected{% endif %}>{{maplist[row][0]}}</option>
+				{% endfor %}
+			</optgroup>
 			{% endfor %}
 		</select>
   </div>
   <div class="col-md-1">
 		<button type="submit" class="btn btn-primary" style="font-size: 20px;">查詢</button>
   </div>
- </div>
+  
+
 </form>
+<div class="col-md-1">
+  <form method="post">
+  	<button type="submit" class="btn btn-primary" style="font-size: 20px; width:127px; position: relative; top:20px;">更新資料庫</button>
+  </form>
+</div>
+</div>
 <p>{{da}}</p>
+<p>{{succuss}}</p>
 <div style="width: 99%;">
   <canvas id="lineChart"></canvas>
 </div>
+{% if request.method == 'POST' %}
+<script type="text/javascript">
+window.alert("更新資料成功");
+</script>
+{% endif %}
 {% if date != [] and aqi1 != [] and aqi2 != [] and stname1 !=None and stname != None %}
 <script type="text/javascript">
 	var labels = {{ date | tojson }}

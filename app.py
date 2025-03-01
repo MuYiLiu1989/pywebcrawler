@@ -2,7 +2,7 @@ from flask import Flask,render_template,request
 from flask_paginate import Pagination,get_page_parameter
 from urllib.request import Request,urlopen
 from bs4 import BeautifulSoup
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta,timezone
 import mysql.connector
 import requests
 import json
@@ -10,6 +10,8 @@ import ssl
 import re
 from waitress import serve
 import logging
+import pymongo
+import os
 
 def dbegin():
 	global conn
@@ -27,6 +29,18 @@ def dbegin():
 def dbclose():
 	cursor.close()
 	conn.close()
+
+def mongodb():
+	global client
+	global db
+	try:
+		client = pymongo.MongoClient("mongodbaqi:27017")
+	except:
+		print("mongodb連接失敗")
+	else:
+		print("mongodb連接成功")
+
+	db = client.crawlerdisplay
 
 def total(table):
     page = request.args.get('page')
@@ -57,7 +71,7 @@ def index():
 
     data = requests.get(url,headers=header)
     data.encoding = "utf-8"
-    #print(data.status_code)
+    print(data.status_code)
     data = data.text
     soup = BeautifulSoup(data,"html.parser")
 
@@ -125,6 +139,7 @@ def index():
         if n>=7:
             break
 #---------------------------------books-----------------------------------
+#---------------------------------aqi-------------------------------------
     aqistid = ['46','29','43','55','28','64','63','67','17','39']
     x=datetime.now()
     z=timedelta(hours=1)
@@ -165,105 +180,40 @@ def index():
             aqinow.append(None)
         else:
             aqinow.append(aqi)
-        
+#---------------------------------aqi-------------------------------------     
     return render_template('index.html',**locals())
 
-@app.route('/aqi')
+@app.route('/aqi',methods=['POST','GET'])
 def aqi():
 
     ST1ID = request.args.get('station1')
     ST2ID = request.args.get('station2')
 
-    maplist = {
-    "1": "二林",
-    "2": "三重",
-    "3": "三義",
-    "4": "土城",
-    "5": "士林",
-    "6": "大同",
-    "7": "大里",
-    "8": "大園",
-    "9": "大寮",
-    "10": "小港",
-    "11": "中山",
-    "12": "中壢",
-    "13": "仁武",
-    "14": "斗六",
-    "15": "冬山",
-    "16": "古亭",
-    "17": "左營",
-    "18": "平鎮",
-    "19": "永和",
-    "20": "安南",
-    "21": "朴子",
-    "22": "汐止",
-    "23": "竹山",
-    "24": "竹東",
-    "25": "西屯",
-    "26": "沙鹿",
-    "27": "宜蘭",
-    "28": "忠明",
-    "29": "松山",
-    "30": "板橋",
-    "31": "林口",
-    "32": "林園",
-    "33": "花蓮",
-    "34": "金門",
-    "35": "前金",
-    "36": "前鎮",
-    "37": "南投",
-    "38": "屏東",
-    "39": "恆春",
-    "40": "美濃",
-    "41": "苗栗",
-    "42": "埔里",
-    "43": "桃園",
-    "44": "馬公",
-    "45": "馬祖",
-    "46": "基隆",
-    "47": "崙背",
-    "48": "淡水",
-    "49": "麥寮",
-    "50": "善化",
-    "51": "復興",
-    "52": "湖口",
-    "53": "菜寮",
-    "54": "陽明",
-    "55": "新竹",
-    "56": "新店",
-    "57": "新莊",
-    "58": "新港",
-    "59": "新營",
-    "60": "楠梓",
-    "61": "萬里",
-    "62": "萬華",
-    "63": "嘉義",
-    "64": "彰化",
-    "65": "臺西",
-    "66": "臺東",
-    "67": "臺南",
-    "68": "鳳山",
-    "69": "潮州",
-    "70": "線西",
-    "71": "橋頭",
-    "72": "頭份",
-    "73": "龍潭",
-    "74": "豐原",
-    "75": "關山",
-    "76": "觀音",
-    "84": "彰化（員林）",
-    "85": "高雄（湖內）",
-    "86": "臺南（麻豆）",
-    "87": "屏東（琉球）",
-    "91": "新北(樹林)",
-    "92": "花蓮（美崙）",
-    "93": "屏東(枋山)",
-    "96": "富貴角",
-    "136": "大城"
-    }
+    mongodb()
+    mapsample = db.aqi.find().sort({'datehour':-1}).limit(1)
+    mapdata = mapsample[0]['stationList']  #字典裝在串列裡，就算只有一個元素也一樣
+    maplist = {i['id']:[i['stationName'],i['county']] for i in mapdata}
+    countyList = ['Keelung', 'Taipei', 'Newtaipei', 'Taoyuan', 'Hsinchu', 'Hsinchu_city', 'Miaoli', 'Taichung', 'Changhua', 'Nantou', 'Yunlin', 'Chiayi', 'Chiayi_city', 'Tainan', 'Kaohsiung', 'Pingtung', 'Yilan', 'Hualien', 'Taitung', 'Penghu', 'Kinmen', 'Lienchiang']
+    categ=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    for i in maplist:
+    	n = countyList.index(maplist[i][1])
+    	categ[n].append(i)
+
+    categList = zip(*[countyList,categ])
+    categList = dict(categList) #要用dict不要用list
+
+    countyOrder =["基隆","台北","新北","桃園","新竹","新竹市","苗栗","台中","彰化","南投","雲林","嘉義","嘉義市","台南","高雄","屏東","宜蘭","花蓮","台東","澎湖","金門","連江"]
+
+    countymap = zip(*[countyList,countyOrder])
+    countymap = dict(countymap)
+
+    if request.method == 'POST':
+    	os.chdir('../datadrain')
+    	os.system('python3 aqidrain.py')
+    	succuss="更新成功"
 
     if ST1ID==None or ST2ID==None:
-        da="請選擇測站"
+        da=""
         aqi1=[]
         aqi2=[]
         date=[]
@@ -271,77 +221,41 @@ def aqi():
         stname2=None
 
     else:
-        dbegin()
         
-        stname1 = maplist[ST1ID]
-        stname2 = maplist[ST2ID]
-        """
-        today=datetime.now()
-        delta=timedelta(hours=1)
-        n=today-delta
-        hour = 72
-        n=n-timedelta(hours=hour)
+        stname1 = maplist[ST1ID][0]
+        stname2 = maplist[ST2ID][0]
+        
+        cursor = db.aqi.aggregate([
+		  { '$sort': { 'datehour': -1 } },
+		  { '$limit': 96 },
+		  {
+		    "$project": {
+		      "datehour": 1,
+		      "_id":0,
+		      "twostations": {
+		        "$filter": {
+		          "input": "$stationList",   # 指定要篩選的陣列
+		          "as": "station",        # 定義變數 "station"
+		          "cond": { "$or": [
+		              { "$eq": ["$$station.id", ST1ID] },
+		              { "$eq": ["$$station.id", ST2ID] }
+		            ]}  # 變數 $$station 代表陣列內的每個物件
+		        }
+		      }
+		    }
+		  }
+		])
 
-        header={
-            "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-        }
-
-        for i in range(hour):
-
-            w=n.strftime("%Y%m%d%H")
-            vv=n.strftime("%Y/%m/%d %H時")
-
-            url = "https://airtw.moenv.gov.tw/json/AQI/Taiwan_{}.json".format(w)
-
-            resp = requests.get(url,headers=header)
-            resp.encoding = "utf-8"
-            data = resp.json()
-
-            aqi=[]
-            for row in data:    
-                txt = row['txt'].split()[1]
-                aqi.append("'"+txt+"'")
-
-            sql = "show columns from aqi"
-            cursor.execute(sql)
-            coldata = cursor.fetchall()
-
-            sqlhead="insert into aqi("
-
-            col=[]
-            a=0
-            for row in coldata:
-                if a!=0:
-                    col.append(row[0])
-                a+=1
-
-            sqlcol=','.join(col)
-
-            sqlbody=") values('{}',".format(vv)
-
-            sqlvalue=",".join(aqi)
-
-            sqlend=")"
-
-            sql = "select * from aqi where datehour='{}'".format(vv)
-            cursor.execute(sql)
-            if cursor.rowcount==0:
-                sql = sqlhead + sqlcol + sqlbody + sqlvalue + sqlend
-                cursor.execute(sql)
-                conn.commit()
-
-            n+=delta
-        """
-        sql = "select datehour,st{},st{} from aqi order by id desc limit 96".format(ST1ID,ST2ID)
-        cursor.execute(sql)
-        dataa=cursor.fetchall()
-
-        finaldata = zip(*dataa)
-        finaldata = list(finaldata)
-        date = list(finaldata[0])
-        st1 = list(finaldata[1])
-        st2 = list(finaldata[2])
+        date=[]
+        st1=[]
+        st2=[]
+        for item in list(cursor):
+            date0 = item['datehour'].astimezone(timezone(timedelta(hours=8))).strftime("%Y/%m/%d %H時")
+            st10 = item['twostations'][0]['aqi']
+            st20 = item['twostations'][1]['aqi']
+            date.append(date0)
+            st1.append(st10)
+            st2.append(st20)
 
         date.reverse()
         st1.reverse()
@@ -367,7 +281,7 @@ def aqi():
             else:
                 aqi2.append(aqi)
 
-        dbclose()
+        
 
     return render_template("aqi.html",**locals())
 
@@ -386,7 +300,7 @@ def cwa():
     STATION=[]
 
     if ST1ID==None or ST2ID==None:
-        da="請選擇測站"
+        da=""
         DATE=[]
     else:
         for sid in [ST1ID,ST2ID]:
@@ -495,5 +409,15 @@ def books():
     return render_template('books.html',**locals())
 
 if __name__ == "__main__":
-	logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
-	serve(app,host="0.0.0.0",port=50)
+	#logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
+    host = "0.0.0.0"
+    port = 50
+
+    # 顯示 URL 和 Port
+    print(f"Serving on http://{host}:{port}")
+
+    # 使用 logging 來記錄
+    logging.info(f"Serving on http://{host}:{port}")
+
+    # 啟動服務
+    serve(app, host=host, port=port)
