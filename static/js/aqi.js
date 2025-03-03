@@ -24,6 +24,22 @@ const ctx2 = document.getElementById('aqi').getContext('2d');
             weight: 'bold', // 標題字體粗細
             color: 'rgba(255, 99, 132, 1)' // 標題字體顏色
           }},
+    	tooltip: {
+    		callbacks: {
+      			label: function(tooltipItem) {
+      				
+				var description = descriptions[tooltipItem.dataIndex]; // 根據 datasetIndex & dataIndex 取得描述
+
+					return `${tooltipItem.dataset.label}: ${description}`;
+				}
+    		}
+  		},
+/*
+[
+  { label: "一月", dataset: { label: "2023 銷售額" }, raw: 30 },
+  { label: "一月", dataset: { label: "2024 銷售額" }, raw: 40 }
+]
+*/    
         legend: {
           display: true, // 顯示圖例 (預設為 true)
           position: 'top', // 圖例位置 (可選：'top', 'bottom', 'left', 'right')
