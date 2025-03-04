@@ -295,8 +295,37 @@ def cwa():
     ST1ID = request.args.get('station1')
     ST2ID = request.args.get('station2')
 
+    file = "../datadrain/CountyID.txt"
+    with open(file,'r',encoding="utf-8") as fObj:
+    	data = fObj.read()
+
+    soup = BeautifulSoup(data,"html.parser")
+
+    countyidmap={}
+    options = soup.select('option')
+    for opt in options:
+    	countyidmap[opt.get('value')]=opt.text
+
+    countyorder=[]
+    for opt in options:
+    	countyorder.append(opt.get('value'))
+
+    categ = []
+    for i in range(len(countyorder)):
+    	categ.append([])
+
     response = requests.get("https://www.cwa.gov.tw/Data/js/Observe/OSM/C/STMap.json")
     data = response.json()
+
+    stationmap={}
+    for item in data:
+    	if item["eW_Hour"]=="every 10 minutes in 00-24h":
+    		n = countyorder.index(item["CountyID"])
+    		categ[n].append(item["ID"])
+    		stationmap[item["ID"]] = item["STname"]
+
+    categList = zip(*[countyorder,categ])
+    categList = dict(categList)
 
     TEMPER=[]
     STATION=[]

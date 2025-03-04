@@ -19,21 +19,24 @@
   <div class="col-md-3">
   	<label class="control-label">請選擇測站：</label>
     <select name="station1" class="form-select" required id="ST1">
-    	
-	  	{% for row in data %}
-	  	{% if row["eW_Hour"]=="every 10 minutes in 00-24h" %}
-			<option value='{{row["ID"]}}' {% if ST1ID == row["ID"] %}selected{% endif %}>{{row["STname"]}}</option>
-			{% endif %}
+	  	{% for county in countyorder %}
+	  	<optgroup label="{{countyidmap[county]}}">
+	  		{% for i in categList[county] %}
+				<option value="{{i}}" {% if ST1ID == i %}selected{% endif %}>{{stationmap[i]}}</option>
 			{% endfor %}
-		</select>
+		</optgroup>
+		{% endfor %}
+	</select>
   </div>
   <div class="col-md-3">
   	<label class="control-label">請選擇測站：</label>
 		<select name="station2" class="form-select" required id="ST2">
-			{% for row in data %}
-			{% if row["eW_Hour"]=="every 10 minutes in 00-24h" %}
-			<option value='{{row["ID"]}}' {% if ST2ID == row["ID"] %}selected{% endif %}>{{row["STname"]}}</option>
-			{% endif %}
+			{% for county in countyorder %}
+	  		<optgroup label="{{countyidmap[county]}}">
+	  			{% for i in categList[county] %}
+					<option value="{{i}}" {% if ST2ID == i %}selected{% endif %}>{{stationmap[i]}}</option>
+				{% endfor %}
+			</optgroup>
 			{% endfor %}
 		</select>
   </div>
