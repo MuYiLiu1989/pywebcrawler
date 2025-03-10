@@ -63,13 +63,13 @@
 window.alert("更新資料成功");
 </script>
 {% endif %}
-{% if date != [] and aqi1 != [] and aqi2 != [] and stname1 !=None and stname != None and st1 !=[] and st2 !=[] %}
+{% if ST1ID!=None and ST2ID!=None %}
 <script type="text/javascript">
-	var labels = {{ date | tojson }}
-  var data0 = {{ aqi1 | tojson }}
-  var data1 = {{ aqi2 | tojson }}
-  var st0 = "{{stname1}}"
-  var st1 = "{{stname2}}"
+	var labels = {{ date | tojson }};
+  var data0 = {{ aqi1 | tojson }};
+  var data1 = {{ aqi2 | tojson }};
+  var st0 = "{{stname1}}";
+  var st1 = "{{stname2}}";
   var orginst1 = {{st1 | tojson }};
   var orginst2 = {{st2 | tojson }};
   var descriptionsList = [orginst1,orginst2];

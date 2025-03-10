@@ -170,7 +170,8 @@ def index():
     for item in aqistid:
         aqistch.append(maplist[item][0])
         rawaqinow.append(maplist[item][1])
-            
+
+#用正則表達式去掉文字只保留數字           
     pattern = "[0-9]+"
     aqinow=[]
     for i in rawaqinow:
@@ -189,6 +190,7 @@ def aqi():
     ST1ID = request.args.get('station1')
     ST2ID = request.args.get('station2')
 
+#抓取測站與所屬縣市的關係並歸類整理
     mongodb()
     mapsample = db.aqi.find().sort({'datehour':-1}).limit(1)
     mapdata = mapsample[0]['stationList']  #字典裝在串列裡，就算只有一個元素也一樣
@@ -207,22 +209,13 @@ def aqi():
     countymap = zip(*[countyList,countyOrder])
     countymap = dict(countymap)
 
+#按下method是post的表單後執行以下程式碼，為了爬取最新aqi觀測資料
     if request.method == 'POST':
     	os.chdir('../datadrain')
     	os.system('python3 aqidrain.py')
     	succuss="更新成功"
 
-    if ST1ID==None or ST2ID==None:
-        da=""
-        aqi1=[]
-        aqi2=[]
-        date=[]
-        stname1=None
-        stname2=None
-        st1=[]
-        st2=[]
-
-    else:
+    if ST1ID != None and ST2ID != None:
         
         stname1 = maplist[ST1ID][0]
         stname2 = maplist[ST2ID][0]
@@ -263,6 +256,7 @@ def aqi():
         st1.reverse()
         st2.reverse()
 
+#用正則表達式去掉文字只保留數字
         pattern = "[0-9]+"
         aqi1=[]
         for i in st1: 
@@ -294,7 +288,8 @@ def aqi():
 def cwa():
     ST1ID = request.args.get('station1')
     ST2ID = request.args.get('station2')
-
+    
+#抓取測站與所屬縣市的關係並歸類整理
     file = "../datadrain/CountyID.txt"
     with open(file,'r',encoding="utf-8") as fObj:
     	data = fObj.read()
@@ -327,13 +322,11 @@ def cwa():
     categList = zip(*[countyorder,categ])
     categList = dict(categList)
 
-    TEMPER=[]
-    STATION=[]
+    if ST1ID != None and ST2ID != None:
 
-    if ST1ID==None or ST2ID==None:
-        da=""
-        DATE=[]
-    else:
+        TEMPER=[]
+        STATION=[]
+        
         for sid in [ST1ID,ST2ID]:
 
             with urlopen("https://www.cwa.gov.tw/V8/C/W/Observe/MOD/24hr/{}.html".format(sid)) as resp:

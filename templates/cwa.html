@@ -49,13 +49,13 @@
 <div style="width: 99%;">
   <canvas id="lineChart"></canvas>
 </div>
-{% if DATE != [] and TEMPER != [] and STATION != [] %}
+{% if ST1ID!=None and ST2ID!=None %}
 <script type="text/javascript">
-	var labels = {{ DATE | tojson }}
-  var data0 = {{ TEMPER[0] | tojson }}
-  var data1 = {{ TEMPER[1] | tojson }}
-  var st0 = "{{STATION[0]}}"
-  var st1 = "{{STATION[1]}}"
+	var labels = {{ DATE | tojson }};
+  var data0 = {{ TEMPER[0] | tojson }};
+  var data1 = {{ TEMPER[1] | tojson }};
+  var st0 = "{{STATION[0]}}";
+  var st1 = "{{STATION[1]}}";
 </script>
 <script src="{{ url_for('static', filename='js/line2.js') }}" type="text/javascript"></script>
 {% endif %}
