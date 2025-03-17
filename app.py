@@ -211,7 +211,7 @@ def aqi():
 
 #按下method是post的表單後執行以下程式碼，為了爬取最新aqi觀測資料
     if request.method == 'POST':
-    	os.chdir('../datadrain')
+    	os.chdir('./dataimport')
     	os.system('python3 aqidrain.py')
     	succuss="更新成功"
 
@@ -290,7 +290,7 @@ def cwa():
     ST2ID = request.args.get('station2')
     
 #抓取測站與所屬縣市的關係並歸類整理
-    file = "../datadrain/CountyID.txt"
+    file = "./dataimport/CountyID.txt"
     with open(file,'r',encoding="utf-8") as fObj:
     	data = fObj.read()
 
