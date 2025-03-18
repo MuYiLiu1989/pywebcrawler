@@ -1,0 +1,36 @@
+#version: '3.8'    #check if there is a new docker compose version
+services:
+  flask:
+    image: pywebcrawler:0318    #check the php version you need for your project
+    container_name: mypythonwork
+    restart: unless-stopped
+    ports:
+      - "5000:50"    #this line maps your pc port to the container port
+    depends_on:
+      - db    #this line links this container to the db container
+      - mongodb
+    #volumes:
+    #  - ./workdir:/usr/src/app
+  db:
+    image: sqlcrawler:0318    #check the mysql version you need for your project
+    container_name: mysqlchiang
+    #environment:
+    #  MYSQL_ROOT_PASSWORD: 1234567890    #you can change the mysql root password here
+    #  MYSQL_DATABASE: webcrawler    #you can change the database name here
+    #volumes:
+    #  - ./mysql_data:/var/lib/mysql    #this line maps the content of ./mysql_data in your pc to the /var/lib/mysql of the container
+    #  - ./imexport:/imexport
+  mongodb:
+    image: mongoaqi:0315
+    container_name: mongodbaqi
+    restart: unless-stopped
+    #environment:
+    #  MONGO_INITDB_ROOT_USERNAME: root
+    #  MONGO_INITDB_ROOT_PASSWORD: A123456789
+    #  MONGO_INITDB_DATABASE: orderrecord
+    #  TZ: Asia/Taipei
+    #volumes: 
+    #  - ./mongodb/data:/data/db
+    #  - ./Mongoimportexport:/importexport
+    ports: 
+      - '27018:27017'

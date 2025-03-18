@@ -211,8 +211,8 @@ def aqi():
 
 #按下method是post的表單後執行以下程式碼，為了爬取最新aqi觀測資料
     if request.method == 'POST':
-    	os.chdir('./dataimport')
-    	os.system('python3 aqidrain.py')
+    	#os.chdir('./dataimport')
+    	os.system('python3 ./dataimport/aqidrain.py')
     	succuss="更新成功"
 
     if ST1ID != None and ST2ID != None:
@@ -290,6 +290,7 @@ def cwa():
     ST2ID = request.args.get('station2')
     
 #抓取測站與所屬縣市的關係並歸類整理
+    #print("當前路徑：",os.getcwd())
     file = "./dataimport/CountyID.txt"
     with open(file,'r',encoding="utf-8") as fObj:
     	data = fObj.read()
@@ -381,7 +382,7 @@ def drama():
         
     else:
         #查詢書本、價格
-        sql = "select * from drama where title like '%{}%' or category like '%{}%' and year between {} and {} order by price {} limit {},28".format(q,q,minp,maxp,sortp,startp*28)
+        sql = "select * from drama where title like '%{}%' or category like '%{}%' and year between {} and {} order by year {} limit {},28".format(q,q,minp,maxp,sortp,startp*28)
 
     cursor.execute(sql)
     data = cursor.fetchall()   
